@@ -1,8 +1,9 @@
-"""CPU smoke tests for the JET-style EEG retrieval encoder."""
+"""CPU smoke tests for the modular JET-style EEG retrieval encoder."""
 
 import torch
 
-from jet_retrieval import JETRetrievalEncoder
+from jet_encoder import JETRetrievalEncoder
+from jet_modules import sinusoidal_time_embedding
 
 
 def test_output_shape_and_normalization() -> None:
@@ -43,6 +44,13 @@ def test_flow_loss_is_finite_and_differentiable() -> None:
     assert model.velocity_head[-1].weight.grad is not None
 
 
+def test_time_embedding_shape() -> None:
+    t = torch.tensor([0.0, 0.5, 1.0])
+    embedding = sinusoidal_time_embedding(t, dim=65)
+    assert embedding.shape == (3, 65)
+    assert torch.isfinite(embedding).all()
+
+
 def test_factory_constructor() -> None:
     model = JETRetrievalEncoder((63, 250))
     assert model.input_shape == (63, 250)
@@ -52,5 +60,6 @@ def test_factory_constructor() -> None:
 if __name__ == "__main__":
     test_output_shape_and_normalization()
     test_flow_loss_is_finite_and_differentiable()
+    test_time_embedding_shape()
     test_factory_constructor()
-    print("JET EEG retrieval smoke tests passed.")
+    print("Modular JET EEG retrieval smoke tests passed.")
