@@ -3,6 +3,7 @@ import os
 import torch
 import torch.optim as optim
 from torch.nn import CrossEntropyLoss
+from torch import Tensor
 from torch.nn import functional as F
 from torch.optim import Adam
 from torch.utils.data import DataLoader
